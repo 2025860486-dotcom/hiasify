@@ -1,1 +1,527 @@
-# hiasify
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiasify Mini Studio | Cute Custom Gifts</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sage: '#dce8cc',
+                        sageDark: '#cadbb5',
+                        pinkPill: '#f9cad7',
+                        pinkBox: '#f8b4b4',
+                        pinkFooter: '#f7adad',
+                        brandGreen: '#3e6b27',
+                        brandDarkGreen: '#2a4b1a'
+                    },
+                    fontFamily: {
+                        serif: ['Georgia', 'Cambria', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #dce8cc;
+            color: #2b3a22;
+        }
+
+        /* Page Fade-In on Initial Load */
+        .fade-in-page {
+            animation: fadeInPage 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scroll Animation Classes */
+        .animate-on-scroll {
+            opacity: 0;
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+            will-change: opacity, transform;
+        }
+
+        /* Slide from Left */
+        .slide-from-left {
+            transform: translateX(-50px);
+        }
+
+        /* Slide from Right */
+        .slide-from-right {
+            transform: translateX(50px);
+        }
+
+        /* Slide from Bottom */
+        .slide-from-bottom {
+            transform: translateY(50px);
+        }
+
+        /* Visible state triggered by IntersectionObserver */
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+
+        /* Fallback styling for local images if missing */
+        img {
+            object-fit: contain;
+        }
+
+        .img-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #d1d5db;
+            color: #4b5563;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Underline decoration matching the mockup */
+        .wavy-underline {
+            text-decoration: underline;
+            text-decoration-color: #5c993d;
+            text-decoration-thickness: 3px;
+        }
+
+        /* Logo Spin Animation Class */
+        .spin-active {
+            transform: rotate(360deg);
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Nav expanding out from the logo side */
+        .nav-unfold {
+            max-width: 32rem !important; /* Expansion width */
+            opacity: 1 !important;
+            transform: scaleX(1) !important;
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+            margin-left: -0.75rem !important; /* Visually merges with logo border */
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between fade-in-page">
+
+    <!-- Sticky Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#dce8cc]/95 backdrop-blur-md border-b border-sageDark px-4 py-3 shadow-xs">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            
+            <!-- Logo + Expanding Nav Group Container -->
+            <div class="flex items-center relative">
+                <!-- Interactive Logo Button (Always in front) -->
+                <button 
+                    id="logoBtn" 
+                    onclick="toggleNav()" 
+                    class="relative z-20 flex-shrink-0 flex items-center focus:outline-none cursor-pointer group bg-[#dce8cc] p-0.5 rounded-full"
+                    title="Click logo to rollout navigation"
+                >
+                    <img 
+                        id="hiasifyLogo"
+                        src="file:///C:/Users/sitin/Documents/ENT300/IMG/logo.png" 
+                        alt="Hiasify Logo" 
+                        class="h-14 w-14 rounded-full object-cover shadow-sm group-hover:scale-105 transition-all duration-300"
+                        onerror="this.onerror=null; this.src='https://placehold.co/100x100/f9cad7/3e6b27?text=HIASIFY';"
+                    />
+                </button>
+
+                <!-- Navigation Links - Emerges & Expands directly from behind the Logo -->
+                <nav 
+                    id="navBar" 
+                    class="relative z-10 bg-pinkPill text-brandDarkGreen font-bold py-2.5 rounded-r-full shadow-md flex items-center justify-center max-w-0 opacity-0 scale-x-0 origin-left overflow-hidden transition-all duration-700 ease-out text-xs sm:text-sm tracking-wider uppercase pl-6"
+                >
+                    <div class="flex items-center justify-center space-x-2 sm:space-x-3 w-full whitespace-nowrap">
+                        <a href="#home" class="hover:text-black transition-colors">HOME</a>
+                        <span class="text-pinkBox">|</span>
+                        <a href="#about" class="hover:text-black transition-colors whitespace-nowrap">ABOUT US</a>
+                        <span class="text-pinkBox">|</span>
+                        <a href="#product" class="hover:text-black transition-colors">PRODUCT</a>
+                        <span class="text-pinkBox">|</span>
+                        <a href="#contact" class="hover:text-black transition-colors whitespace-nowrap">CONTACT US</a>
+                    </div>
+                </nav>
+
+                <!-- "click me" prompt with arrow pointing right at the logo -->
+                <div id="clickMePrompt" class="ml-3 flex items-center text-brandDarkGreen font-bold text-xs sm:text-sm animate-pulse space-x-1 cursor-pointer select-none" onclick="toggleNav()">
+                    <svg class="w-4 h-4 transform -rotate-45 text-brandGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span class="font-serif italic tracking-wide">click me</span>
+                </div>
+            </div>
+
+            <!-- Right TikTok Icon -->
+            <a href="https://www.tiktok.com/@hiasify?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="flex-shrink-0 group" title="Visit our TikTok">
+                <img 
+                    src="file:///C:/Users/sitin/Documents/ENT300/IMG/tt.png" 
+                    alt="TikTok" 
+                    class="h-11 w-11 rounded-full shadow-sm group-hover:scale-110 transition-transform"
+                    onerror="this.onerror=null; this.src='https://placehold.co/80x80/000000/ffffff?text=TT';"
+                />
+            </a>
+
+            <!-- Font Size Adjuster Controls -->
+            <div class="flex items-center space-x-1 ml-3 bg-white/60 px-2 py-1 rounded-full border border-brandGreen/20 shadow-xs">
+                <span class="text-[10px] font-bold text-brandDarkGreen uppercase mr-1 hidden sm:inline">Text Size</span>
+                <button onclick="changeFontSize(-1)" class="w-6 h-6 rounded-full bg-pinkPill hover:bg-pinkBox text-brandDarkGreen font-extrabold text-xs flex items-center justify-center transition-colors" title="Decrease font size">A-</button>
+                <button onclick="resetFontSize()" class="w-6 h-6 rounded-full bg-white hover:bg-gray-100 text-brandDarkGreen font-bold text-xs flex items-center justify-center transition-colors" title="Reset font size">A</button>
+                <button onclick="changeFontSize(1)" class="w-6 h-6 rounded-full bg-pinkPill hover:bg-pinkBox text-brandDarkGreen font-extrabold text-xs flex items-center justify-center transition-colors" title="Increase font size">A+</button>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 w-full space-y-16 py-8">
+
+        <!-- Hero Section -->
+        <section id="home" class="pt-4">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Left Content -->
+                <div class="lg:col-span-7 space-y-4">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-extrabold text-brandGreen leading-tight wavy-underline">
+                        Cute Custom gift to Brighten Your Day!
+                    </h1>
+                    <p class="text-base sm:text-lg text-gray-800 leading-relaxed max-w-2xl font-medium">
+                        Discover Hiasify's aesthetic collection of custom tin cases, keychains, bracelets, button badges, scrunchies, stickers, brooches, and lapel pins!
+                    </p>
+                    <div class="pt-2">
+                        <a href="#product" class="inline-block bg-pinkBox hover:bg-pinkPill text-brandDarkGreen font-bold px-6 py-3 rounded-full shadow-md transition-all hover:shadow-lg">
+                            Explore Collection &rarr;
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Featured Image Box (GAMBAR) -->
+                <div class="lg:col-span-5">
+                    <div class="w-full h-64 sm:h-80 md:h-96 bg-gray-300 border-4 border-brandGreen/40 rounded-xl shadow-md flex items-center justify-center text-gray-700 font-bold tracking-widest text-xl uppercase overflow-hidden relative group">
+                        <img 
+                            src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80" 
+                            alt="Hiasify Featured Gifts" 
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onerror="this.style.display='none';"
+                        />
+                        <span class="absolute inset-0 flex items-center justify-center bg-gray-200/80 group-hover:bg-transparent group-hover:text-transparent transition-all pointer-events-none">GAMBAR</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Welcome Section -->
+        <section id="about" class="text-center space-y-6">
+            <div class="space-y-2">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-brandGreen">
+                    Welcome to Hiasify Mini Studio
+                </h2>
+                <p class="text-sm sm:text-base italic text-gray-700 font-medium">
+                    "Hiasify" came from the word <span class="font-bold underline text-brandGreen">hias</span> as we choose to decorate your daily life with joy!
+                </p>
+            </div>
+
+            <!-- 5 Gallery Item Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+                <div class="h-32 sm:h-40 bg-gray-300 rounded-lg shadow-xs flex items-center justify-center text-gray-600 font-semibold text-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/pin.jpg" alt="Mini Studio Pins" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/300x300/f9cad7/3e6b27?text=Pins';"/>
+                </div>
+                <div class="h-32 sm:h-40 bg-gray-300 rounded-lg shadow-xs flex items-center justify-center text-gray-600 font-semibold text-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/scrunchie2.jpg" alt="Mini Studio Scrunchies" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/300x300/f9cad7/3e6b27?text=Scrunchies';"/>
+                </div>
+                <div class="h-32 sm:h-40 bg-gray-300 rounded-lg shadow-xs flex items-center justify-center text-gray-600 font-semibold text-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/keychain.jpg" alt="Mini Studio Keychains" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/300x300/f9cad7/3e6b27?text=Keychains';"/>
+                </div>
+                <div class="h-32 sm:h-40 bg-gray-300 rounded-lg shadow-xs flex items-center justify-center text-gray-600 font-semibold text-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/sticker.jpg" alt="Mini Studio Stickers" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/300x300/f9cad7/3e6b27?text=Stickers';"/>
+                </div>
+                <div class="h-32 sm:h-40 bg-gray-300 rounded-lg shadow-xs flex items-center justify-center text-gray-600 font-semibold text-sm hover:shadow-md transition-shadow overflow-hidden col-span-2 sm:col-span-1">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/set.jpg" alt="Mini Studio Combo Set" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/300x300/f9cad7/3e6b27?text=Combo+Set';"/>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="space-y-4">
+            <h3 class="text-center text-sm font-bold tracking-widest text-gray-700 uppercase">REVIEWS</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-gray-300/80 p-5 rounded-2xl shadow-xs space-y-2 text-center flex flex-col justify-between hover:bg-gray-300 transition-colors">
+                    <div class="text-amber-500 text-lg">★★★★★</div>
+                    <p class="text-xs text-gray-700 italic">"Super cute tin cases! The custom details are so neat and perfect for gifts."</p>
+                    <span class="text-xs font-bold text-brandDarkGreen">— Aina M.</span>
+                </div>
+                <div class="bg-gray-300/80 p-5 rounded-2xl shadow-xs space-y-2 text-center flex flex-col justify-between hover:bg-gray-300 transition-colors">
+                    <div class="text-amber-500 text-lg">★★★★★</div>
+                    <p class="text-xs text-gray-700 italic">"Love my aesthetic custom keychain! Fast delivery and lovely packaging."</p>
+                    <span class="text-xs font-bold text-brandDarkGreen">— Nurul S.</span>
+                </div>
+                <div class="bg-gray-300/80 p-5 rounded-2xl shadow-xs space-y-2 text-center flex flex-col justify-between hover:bg-gray-300 transition-colors">
+                    <div class="text-amber-500 text-lg">★★★★★</div>
+                    <p class="text-xs text-gray-700 italic">"The scrunchies and lapel pins are so pretty. Will definitely order again!"</p>
+                    <span class="text-xs font-bold text-brandDarkGreen">— Sarah T.</span>
+                </div>
+                <div class="bg-gray-300/80 p-5 rounded-2xl shadow-xs space-y-2 text-center flex flex-col justify-between hover:bg-gray-300 transition-colors">
+                    <div class="text-amber-500 text-lg">★★★★★</div>
+                    <p class="text-xs text-gray-700 italic">"10/10 quality! Brightened my best friend's birthday immensely!"</p>
+                    <span class="text-xs font-bold text-brandDarkGreen">— Chloe K.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Line-Up Section -->
+        <section id="product" class="space-y-6">
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-brandGreen">
+                Product Line-Up!
+            </h2>
+
+            <!-- 7 Product Cards (Removed Item #08 Custom Gift Set) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                <!-- 1. Lapel Pins -->
+                <div class="animate-on-scroll slide-from-left bg-gray-300 h-48 sm:h-56 rounded-2xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all group relative overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/pin.jpg" alt="Lapel Pins" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.style.display='none';" />
+                    <span class="relative z-10 text-xs font-bold uppercase tracking-wider text-brandDarkGreen bg-white/80 px-2 py-1 rounded w-max backdrop-blur-xs">Item #01</span>
+                    <h4 class="relative z-10 font-bold text-base sm:text-lg text-gray-900 group-hover:text-brandGreen bg-white/70 px-2 py-1 rounded backdrop-blur-xs w-max">Lapel Pins</h4>
+                </div>
+
+                <!-- 2. Scrunchies -->
+                <div class="animate-on-scroll slide-from-right bg-gray-300 h-48 sm:h-56 rounded-2xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all group relative overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/scrunchie2.jpg" alt="Scrunchies" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.style.display='none';" />
+                    <span class="relative z-10 text-xs font-bold uppercase tracking-wider text-brandDarkGreen bg-white/80 px-2 py-1 rounded w-max backdrop-blur-xs">Item #02</span>
+                    <h4 class="relative z-10 font-bold text-base sm:text-lg text-gray-900 group-hover:text-brandGreen bg-white/70 px-2 py-1 rounded backdrop-blur-xs w-max">Scrunchies</h4>
+                </div>
+
+                <!-- 3. Brooches -->
+                <div class="animate-on-scroll slide-from-left bg-gray-300 h-48 sm:h-56 rounded-2xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all group relative overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/brooch.jpg" alt="Brooches" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.style.display='none';" />
+                    <span class="relative z-10 text-xs font-bold uppercase tracking-wider text-brandDarkGreen bg-white/80 px-2 py-1 rounded w-max backdrop-blur-xs">Item #03</span>
+                    <h4 class="relative z-10 font-bold text-base sm:text-lg text-gray-900 group-hover:text-brandGreen bg-white/70 px-2 py-1 rounded backdrop-blur-xs w-max">Brooches</h4>
+                </div>
+
+                <!-- 4. Keychains -->
+                <div class="animate-on-scroll slide-from-right bg-gray-300 h-48 sm:h-56 rounded-2xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all group relative overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/keychain.jpg" alt="Keychains" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.style.display='none';" />
+                    <span class="relative z-10 text-xs font-bold uppercase tracking-wider text-brandDarkGreen bg-white/80 px-2 py-1 rounded w-max backdrop-blur-xs">Item #04</span>
+                    <h4 class="relative z-10 font-bold text-base sm:text-lg text-gray-900 group-hover:text-brandGreen bg-white/70 px-2 py-1 rounded backdrop-blur-xs w-max">Keychains</h4>
+                </div>
+
+                <!-- 5. Button Badges -->
+                <div class="animate-on-scroll slide-from-left bg-gray-300 h-48 sm:h-56 rounded-2xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all group relative overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/bb.jpg" alt="Button Badges" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.style.display='none';" />
+                    <span class="relative z-10 text-xs font-bold uppercase tracking-wider text-brandDarkGreen bg-white/80 px-2 py-1 rounded w-max backdrop-blur-xs">Item #05</span>
+                    <h4 class="relative z-10 font-bold text-base sm:text-lg text-gray-900 group-hover:text-brandGreen bg-white/70 px-2 py-1 rounded backdrop-blur-xs w-max">Button Badges</h4>
+                </div>
+
+                <!-- 6. Cute Stickers -->
+                <div class="animate-on-scroll slide-from-right bg-gray-300 h-48 sm:h-56 rounded-2xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all group relative overflow-hidden">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/sticker.jpg" alt="Cute Stickers" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.style.display='none';" />
+                    <span class="relative z-10 text-xs font-bold uppercase tracking-wider text-brandDarkGreen bg-white/80 px-2 py-1 rounded w-max backdrop-blur-xs">Item #06</span>
+                    <h4 class="relative z-10 font-bold text-base sm:text-lg text-gray-900 group-hover:text-brandGreen bg-white/70 px-2 py-1 rounded backdrop-blur-xs w-max">Cute Stickers</h4>
+                </div>
+
+                <!-- 7. Gift Set / Combo -->
+                <div class="animate-on-scroll slide-from-left bg-gray-300 h-48 sm:h-56 rounded-2xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all group relative overflow-hidden col-span-1 sm:col-span-2 md:col-span-1">
+                    <img src="file:///C:/Users/sitin/Documents/ENT300/IMG/set.jpg" alt="Gift Combo Set" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.style.display='none';" />
+                    <span class="relative z-10 text-xs font-bold uppercase tracking-wider text-brandDarkGreen bg-white/80 px-2 py-1 rounded w-max backdrop-blur-xs">Item #07</span>
+                    <h4 class="relative z-10 font-bold text-base sm:text-lg text-gray-900 group-hover:text-brandGreen bg-white/70 px-2 py-1 rounded backdrop-blur-xs w-max">Combo Set</h4>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Us Section -->
+        <section id="contact" class="space-y-6 pt-4">
+            <div class="text-center space-y-1">
+                <span class="text-xs sm:text-sm font-semibold text-gray-700 tracking-wider">want to order?</span>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-brandGreen">
+                    Contact Us Now!
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+                <!-- Left Buttons Column (Slide from Bottom) -->
+                <div class="animate-on-scroll slide-from-bottom md:col-span-5 flex flex-col justify-center space-y-4">
+                    
+                    <!-- WhatsApp Button Container (With 5 Contacts) -->
+                    <div class="bg-pinkBox p-4 rounded-3xl shadow-sm space-y-3">
+                        <div class="flex items-center space-x-3 pb-2 border-b border-pinkPill/60">
+                            <img 
+                                src="file:///C:/Users/sitin/Documents/ENT300/IMG/whatsapp.png" 
+                                alt="WhatsApp" 
+                                class="h-10 w-10 rounded-full object-cover flex-shrink-0"
+                                onerror="this.onerror=null; this.src='https://placehold.co/80x80/25D366/ffffff?text=WA';"
+                            />
+                            <div>
+                                <p class="text-xs text-gray-700 font-bold uppercase tracking-wider">WhatsApp Us</p>
+                                <p class="text-xs text-brandDarkGreen font-medium">Click any number to chat!</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-1.5 text-xs font-bold text-brandDarkGreen">
+                            <a href="https://wa.me/60177266965" target="_blank" rel="noopener noreferrer" class="bg-white/80 hover:bg-white px-3 py-1.5 rounded-full flex items-center justify-between transition-colors shadow-2xs">
+                                <span>📱 +60 17-726 6965</span>
+                                <span class="text-[10px] bg-brandGreen text-white px-2 py-0.5 rounded-full">Chat</span>
+                            </a>
+                            <a href="https://wa.me/601113175496" target="_blank" rel="noopener noreferrer" class="bg-white/80 hover:bg-white px-3 py-1.5 rounded-full flex items-center justify-between transition-colors shadow-2xs">
+                                <span>📱 +60 11-1317 5496</span>
+                                <span class="text-[10px] bg-brandGreen text-white px-2 py-0.5 rounded-full">Chat</span>
+                            </a>
+                            <a href="https://wa.me/60135757481" target="_blank" rel="noopener noreferrer" class="bg-white/80 hover:bg-white px-3 py-1.5 rounded-full flex items-center justify-between transition-colors shadow-2xs">
+                                <span>📱 +60 13-575 7481</span>
+                                <span class="text-[10px] bg-brandGreen text-white px-2 py-0.5 rounded-full">Chat</span>
+                            </a>
+                            <a href="https://wa.me/601121662647" target="_blank" rel="noopener noreferrer" class="bg-white/80 hover:bg-white px-3 py-1.5 rounded-full flex items-center justify-between transition-colors shadow-2xs">
+                                <span>📱 +60 11-2166 2647</span>
+                                <span class="text-[10px] bg-brandGreen text-white px-2 py-0.5 rounded-full">Chat</span>
+                            </a>
+                            <a href="https://wa.me/60183644311" target="_blank" rel="noopener noreferrer" class="bg-white/80 hover:bg-white px-3 py-1.5 rounded-full flex items-center justify-between transition-colors shadow-2xs">
+                                <span>📱 +60 18-364 4311</span>
+                                <span class="text-[10px] bg-brandGreen text-white px-2 py-0.5 rounded-full">Chat</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- TikTok Button Container -->
+                    <a href="https://www.tiktok.com/@hiasify?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="bg-pinkBox hover:bg-pinkPill transition-all p-3.5 sm:p-4 rounded-3xl flex items-center space-x-4 shadow-sm hover:shadow-md group">
+                        <img 
+                            src="file:///C:/Users/sitin/Documents/ENT300/IMG/tt.png" 
+                            alt="TikTok" 
+                            class="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover group-hover:scale-110 transition-transform flex-shrink-0"
+                            onerror="this.onerror=null; this.src='https://placehold.co/80x80/000000/ffffff?text=TT';"
+                        />
+                        <div class="overflow-hidden">
+                            <p class="text-xs text-gray-700 font-medium">Follow TikTok</p>
+                            <p class="font-bold text-sm sm:text-base text-brandDarkGreen truncate">@hiasify</p>
+                        </div>
+                    </a>
+
+                </div>
+
+                <!-- Right Pink Container Box (Slide from Bottom) -->
+                <div class="animate-on-scroll slide-from-bottom md:col-span-7 bg-pinkBox p-6 sm:p-8 rounded-3xl shadow-sm flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <h3 class="text-xl sm:text-2xl font-serif font-extrabold text-brandGreen uppercase tracking-wide">
+                            SEND US A CUSTOM ORDER NOW!
+                        </h3>
+                        
+                        <p class="text-xs sm:text-sm font-bold text-brandDarkGreen tracking-wider uppercase border-b border-brandGreen/20 pb-2">
+                            PLEASE KINDLY PROVIDE US THESE INFORMATION:
+                        </p>
+
+                        <!-- Information checklist -->
+                        <ul class="space-y-2.5 text-xs sm:text-sm font-bold text-gray-800">
+                            <li class="flex items-center space-x-3 bg-white/70 p-2.5 rounded-xl border border-white/40">
+                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-brandGreen text-white text-xs font-black">1</span>
+                                <span class="tracking-wider">NAME</span>
+                            </li>
+                            <li class="flex items-center space-x-3 bg-white/70 p-2.5 rounded-xl border border-white/40">
+                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-brandGreen text-white text-xs font-black">2</span>
+                                <span class="tracking-wider">KOLEJ</span>
+                            </li>
+                            <li class="flex items-center space-x-3 bg-white/70 p-2.5 rounded-xl border border-white/40">
+                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-brandGreen text-white text-xs font-black">3</span>
+                                <span class="tracking-wider">YOUR ORDER</span>
+                            </li>
+                            <li class="flex items-center space-x-3 bg-white/70 p-2.5 rounded-xl border border-white/40">
+                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-brandGreen text-white text-xs font-black">4</span>
+                                <span class="tracking-wider">PHONE NUMBER</span>
+                            </li>
+                            <li class="flex items-center space-x-3 bg-white/70 p-2.5 rounded-xl border border-white/40">
+                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-brandGreen text-white text-xs font-black">5</span>
+                                <span class="tracking-wider">PAYMENT RECEIPT</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Callout Note Box -->
+                    <div class="bg-brandGreen text-white p-4 rounded-2xl text-center space-y-1 shadow-xs">
+                        <p class="text-xs sm:text-sm font-bold uppercase tracking-wider leading-relaxed">
+                            YOU CAN ORDER THROUGH OUR WHATSAPP CONTACT NUMBER OR THROUGH OUR SOCIAL MEDIA!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-pinkFooter text-brandDarkGreen font-bold text-xs sm:text-sm py-3 text-center tracking-wider uppercase border-t border-pinkPill">
+        COPYRIGHT: SHOCONUT | MMC1123A GROUP 11
+    </footer>
+
+    <!-- Interactive Navigation Rollout Script -->
+    <script>
+        // Font Size Adjuster Logic
+        let currentFontSizeLevel = 0;
+        const maxLevel = 3;
+        const minLevel = -2;
+
+        function changeFontSize(delta) {
+            currentFontSizeLevel = Math.max(minLevel, Math.min(maxLevel, currentFontSizeLevel + delta));
+            applyFontSize();
+        }
+
+        function resetFontSize() {
+            currentFontSizeLevel = 0;
+            applyFontSize();
+        }
+
+        function applyFontSize() {
+            const baseSize = 100 + (currentFontSizeLevel * 8); // Scaled percentage
+            document.documentElement.style.fontSize = baseSize + '%';
+        }
+
+        function toggleNav() {
+            const logo = document.getElementById('hiasifyLogo');
+            const navBar = document.getElementById('navBar');
+            const prompt = document.getElementById('clickMePrompt');
+
+            // Trigger full 360 spin effect
+            logo.classList.remove('spin-active');
+            void logo.offsetWidth; // Force re-flow to enable re-spinning if clicked again
+            logo.classList.add('spin-active');
+
+            // Unfold navigation bar outwards from logo
+            navBar.classList.add('nav-unfold');
+
+            // Fade out the "click me" prompt
+            if (prompt) {
+                prompt.style.transition = 'opacity 0.3s ease';
+                prompt.style.opacity = '0';
+                setTimeout(() => {
+                    prompt.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // IntersectionObserver for Scroll Animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        // Stagger effect slightly for smoother visuals
+                        setTimeout(() => {
+                            entry.target.classList.add('is-visible');
+                        }, index * 80);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            animatedElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
