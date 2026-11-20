@@ -102,23 +102,23 @@
 
         /* Nav expanding out from the logo side */
         .nav-unfold {
-            max-width: 32rem !important; /* Expansion width */
+            max-width: 24rem !important; /* Compact expansion width for mobile & desktop */
             opacity: 1 !important;
             transform: scaleX(1) !important;
-            padding-left: 1.25rem !important;
-            padding-right: 1.25rem !important;
-            margin-left: -0.75rem !important; /* Visually merges with logo border */
+            padding-left: 1rem !important;
+            padding-right: 0.85rem !important;
+            margin-left: -0.6rem !important; /* Visually merges with logo border */
         }
     </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col justify-between fade-in-page">
 
     <!-- Sticky Top Navigation Bar -->
-    <header class="sticky top-0 z-50 bg-[#dce8cc]/95 backdrop-blur-md border-b border-sageDark px-4 py-3 shadow-xs">
-        <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <header class="sticky top-0 z-50 bg-[#dce8cc]/95 backdrop-blur-md border-b border-sageDark px-3 sm:px-4 py-2.5 shadow-xs">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
             
             <!-- Logo + Expanding Nav Group Container -->
-            <div class="flex items-center relative">
+            <div class="flex items-center relative min-w-0">
                 <!-- Interactive Logo Button (Always in front) -->
                 <button 
                     id="logoBtn" 
@@ -130,7 +130,7 @@
                         id="hiasifyLogo"
                         src="file:///C:/Users/sitin/Documents/ENT300/IMG/logo.png" 
                         alt="Hiasify Logo" 
-                        class="h-14 w-14 rounded-full object-cover shadow-sm group-hover:scale-105 transition-all duration-300"
+                        class="h-12 w-12 sm:h-14 sm:w-14 rounded-full object-cover shadow-sm group-hover:scale-105 transition-all duration-300"
                         onerror="this.onerror=null; this.src='https://placehold.co/100x100/f9cad7/3e6b27?text=HIASIFY';"
                     />
                 </button>
@@ -138,9 +138,9 @@
                 <!-- Navigation Links - Emerges & Expands directly from behind the Logo -->
                 <nav 
                     id="navBar" 
-                    class="relative z-10 bg-pinkPill text-brandDarkGreen font-bold py-2.5 rounded-r-full shadow-md flex items-center justify-center max-w-0 opacity-0 scale-x-0 origin-left overflow-hidden transition-all duration-700 ease-out text-xs sm:text-sm tracking-wider uppercase pl-6"
+                    class="relative z-10 bg-pinkPill text-brandDarkGreen font-bold py-2 sm:py-2.5 rounded-r-full shadow-md flex items-center justify-center max-w-0 opacity-0 scale-x-0 origin-left overflow-hidden transition-all duration-700 ease-out text-[9px] sm:text-xs tracking-tight sm:tracking-wider uppercase"
                 >
-                    <div class="flex items-center justify-center space-x-2 sm:space-x-3 w-full whitespace-nowrap">
+                    <div class="flex items-center justify-center space-x-1.5 sm:space-x-2.5 w-full whitespace-nowrap">
                         <a href="#home" class="hover:text-black transition-colors">HOME</a>
                         <span class="text-pinkBox">|</span>
                         <a href="#about" class="hover:text-black transition-colors whitespace-nowrap">ABOUT US</a>
@@ -152,7 +152,7 @@
                 </nav>
 
                 <!-- "click me" prompt with arrow pointing right at the logo -->
-                <div id="clickMePrompt" class="ml-3 flex items-center text-brandDarkGreen font-bold text-xs sm:text-sm animate-pulse space-x-1 cursor-pointer select-none" onclick="toggleNav()">
+                <div id="clickMePrompt" class="ml-2.5 flex items-center text-brandDarkGreen font-bold text-xs sm:text-sm animate-pulse space-x-1 cursor-pointer select-none flex-shrink-0" onclick="toggleNav()">
                     <svg class="w-4 h-4 transform -rotate-45 text-brandGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
@@ -165,18 +165,10 @@
                 <img 
                     src="file:///C:/Users/sitin/Documents/ENT300/IMG/tt.png" 
                     alt="TikTok" 
-                    class="h-11 w-11 rounded-full shadow-sm group-hover:scale-110 transition-transform"
+                    class="h-10 w-10 sm:h-11 sm:w-11 rounded-full shadow-sm group-hover:scale-110 transition-transform"
                     onerror="this.onerror=null; this.src='https://placehold.co/80x80/000000/ffffff?text=TT';"
                 />
             </a>
-
-            <!-- Font Size Adjuster Controls -->
-            <div class="flex items-center space-x-1 ml-3 bg-white/60 px-2 py-1 rounded-full border border-brandGreen/20 shadow-xs">
-                <span class="text-[10px] font-bold text-brandDarkGreen uppercase mr-1 hidden sm:inline">Text Size</span>
-                <button onclick="changeFontSize(-1)" class="w-6 h-6 rounded-full bg-pinkPill hover:bg-pinkBox text-brandDarkGreen font-extrabold text-xs flex items-center justify-center transition-colors" title="Decrease font size">A-</button>
-                <button onclick="resetFontSize()" class="w-6 h-6 rounded-full bg-white hover:bg-gray-100 text-brandDarkGreen font-bold text-xs flex items-center justify-center transition-colors" title="Reset font size">A</button>
-                <button onclick="changeFontSize(1)" class="w-6 h-6 rounded-full bg-pinkPill hover:bg-pinkBox text-brandDarkGreen font-extrabold text-xs flex items-center justify-center transition-colors" title="Increase font size">A+</button>
-            </div>
 
         </div>
     </header>
@@ -456,26 +448,6 @@
 
     <!-- Interactive Navigation Rollout Script -->
     <script>
-        // Font Size Adjuster Logic
-        let currentFontSizeLevel = 0;
-        const maxLevel = 3;
-        const minLevel = -2;
-
-        function changeFontSize(delta) {
-            currentFontSizeLevel = Math.max(minLevel, Math.min(maxLevel, currentFontSizeLevel + delta));
-            applyFontSize();
-        }
-
-        function resetFontSize() {
-            currentFontSizeLevel = 0;
-            applyFontSize();
-        }
-
-        function applyFontSize() {
-            const baseSize = 100 + (currentFontSizeLevel * 8); // Scaled percentage
-            document.documentElement.style.fontSize = baseSize + '%';
-        }
-
         function toggleNav() {
             const logo = document.getElementById('hiasifyLogo');
             const navBar = document.getElementById('navBar');
